@@ -1,2 +1,2 @@
-learning_tf
+turtlesim_cleaner
 -DCATKIN_DEVEL_PREFIX=/home/ss/catkin_ws/devel -DCMAKE_INSTALL_PREFIX=/home/ss/catkin_ws/install -G Unix Makefiles
