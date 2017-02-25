@@ -13,7 +13,7 @@ geometry_msgs/Twist.h
 /home/ss/catkin_ws/src/turtlesim_cleaner/src/geometry_msgs/Twist.h
 turtlesim/Pose.h
 /home/ss/catkin_ws/src/turtlesim_cleaner/src/turtlesim/Pose.h
-sstream
+bits/stdc++.h
 -
 
 /opt/ros/kinetic/include/XmlRpcDecl.h
