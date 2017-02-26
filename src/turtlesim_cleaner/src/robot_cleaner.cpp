@@ -145,7 +145,7 @@ void rot(int to)
 	::dir=to;
 }
 
-vector <co_ordinates> uobs;
+vector <co_ordinates> uobs;  //obstacles later to be considered targets
 vector <co_ordinates> foods;
 
 void a_star()
@@ -153,20 +153,23 @@ void a_star()
 	int loop_flag=0;
 	for (int i=0;i<uobs.size();i++)
 	{
+		if (cover==9) break;
 		int tarx=uobs[i].x, tary=uobs[i].y, flag=0, food[2];
 		float dist1,dist2,dist3,dist4;
 		
 		vector <int> v;
 		while(1)
 		{
+			if (cover==9) break;
+			if (uobs.size()>=(10-cover)) loop_flag=1;
 			ROS_INFO("\n*a_star*\nNow at %d,%d\nCollected: %d\nObstacles hit: %ld\n",pos[0],pos[1],cover,uobs.size());
 			int obs[]={0,0,0,0};
-			int count=0, flag=0, remflag;
+			int count=0, foodflag=0, remflag;
 			int tempx=1, tempy=0;
 			dist1=dist2=dist3=dist4=500.0;
 			if (pos[0]+tempx<10 && pos[1]+tempy<10 && pos[0]+tempx>=0 && pos[1]+tempy>=0)
 			{
-				if (!flag)
+				if (!foodflag)
 				{
 					int dec=decode(pos[0]+tempx,pos[1]+tempy);
 					ROS_INFO("1: %d",dec);
@@ -191,7 +194,7 @@ void a_star()
 						  if (pos[0]+tempx==tarx && pos[1]+tempy==tary) break;
 					}
 					else if (dec==2)
-					  {food[0]=tempx; food[1]=tempy; flag=1;}
+					  {food[0]=tempx; food[1]=tempy; foodflag=1;}
 					else {count++;dist1=pow(tarx-(pos[0]+tempx),2)+pow(tary-(pos[1]+tempy),2);}
 				}
 			}
@@ -200,10 +203,10 @@ void a_star()
 			tempx=0; tempy=1;
 			if (pos[0]+tempx<10 && pos[1]+tempy<10 && pos[0]+tempx>=0 && pos[1]+tempy>=0)
 			{
-				if (!flag)
+				if (!foodflag)
 				{
 					int dec=decode(pos[0]+tempx,pos[1]+tempy);
-					ROS_INFO("1: %d",dec);
+					ROS_INFO("2: %d",dec);
 					if (dec==1)
 					{
 				  		obs[count++]=1;
@@ -224,7 +227,7 @@ void a_star()
 						  if (pos[0]+tempx==tarx && pos[1]+tempy==tary) break;
 					}
 					else if (dec==2)
-					  {food[0]=tempx; food[1]=tempy; flag=1;}
+					  {food[0]=tempx; food[1]=tempy; foodflag=1;}
 					else {count++;dist2=pow(tarx-(pos[0]+tempx),2)+pow(tary-(pos[1]+tempy),2);}
 				}
 			}
@@ -233,10 +236,10 @@ void a_star()
 			tempx=-1; tempy=0;
 			if (pos[0]+tempx<10 && pos[1]+tempy<10 && pos[0]+tempx>=0 && pos[1]+tempy>=0)
 			{
-				if (!flag)
+				if (!foodflag)
 				{
 					int dec=decode(pos[0]+tempx,pos[1]+tempy);
-					ROS_INFO("1: %d",dec);
+					ROS_INFO("3: %d",dec);
 					if (dec==1)
 					{
 				  		obs[count++]=1;
@@ -257,7 +260,7 @@ void a_star()
 						  if (pos[0]+tempx==tarx && pos[1]+tempy==tary) break;
 					}
 					else if (dec==2)
-					  {food[0]=tempx; food[1]=tempy; flag=1;}
+					  {food[0]=tempx; food[1]=tempy; foodflag=1;}
 					else {count++;dist3=pow(tarx-(pos[0]+tempx),2)+pow(tary-(pos[1]+tempy),2);}
 				}
 			}
@@ -266,10 +269,10 @@ void a_star()
 			tempx=0; tempy=-1;
 			if (pos[0]+tempx<10 && pos[1]+tempy<10 && pos[0]+tempx>=0 && pos[1]+tempy>=0)
 			{
-				if (!flag)
+				if (!foodflag)
 				{
 					int dec=decode(pos[0]+tempx,pos[1]+tempy);
-					ROS_INFO("1: %d",dec);
+					ROS_INFO("4: %d",dec);
 					if (dec==1)
 					{
 				  		obs[count++]=1;
@@ -290,12 +293,12 @@ void a_star()
 						  if (pos[0]+tempx==tarx && pos[1]+tempy==tary) break;
 					}
 					else if (dec==2)
-					  {food[0]=tempx; food[1]=tempy; flag=1;}
+					  {food[0]=tempx; food[1]=tempy; foodflag=1;}
 					else {count++;dist4=pow(tarx-(pos[0]+tempx),2)+pow(tary-(pos[1]+tempy),2);}
 				}
 			}
 			else obs[count++]=1;
-			if (flag)
+			if (foodflag)
 			{
 				if (food[0]==1) {rot(1); fm(pos);}
 				if (food[0]==-1) {rot(3); fm(pos);}
@@ -306,11 +309,14 @@ void a_star()
 				ROS_INFO("\n\n\n ********COLLECTED %d*********\n", cover+1);
 				cover++;
 				v.clear();
+				for (int i=0;i<uobs.size();i++)
+				  if (uobs[i].x==pos[0] && uobs[i].y==pos[1])  uobs.erase(uobs.begin()+i,uobs.begin()+i+1);
 				if (pos[0]==tarx && pos[1]==tary)
 					break;
 			}
 			else
 			{
+			
 				ROS_INFO("d1: %f, d2: %f, d3 %f, d4: %f\n", dist1,dist2,dist3,dist4);
 				if (dist1 <= dist2 && dist1 <= dist3 && dist1 <= dist4)
 				{rot(1); fm(pos);}
@@ -517,17 +523,32 @@ int main(int argc, char **argv)
 		}
 		else
 		{
+			int flag=1;
 			if (obs[dir-1]==0)
-			{v.push_back(pos[0]*100+pos[1]*10+dir-1); fm(pos);}
-			else
+			{
+				int count=0;
+				for (int i=0; i<v.size();i++)
+				{ 
+					int here=v[i]; here/=10;
+					if (here==pos[0]*10+pos[1])
+					  if (v[i]%10==dir) flag=0;
+				}
+				for (int i=0;i<4;i++)
+				  if (i==dir-1) continue;
+				  else if (obs[i]==1) count++;
+				if (count>=3) flag=0;
+				if (flag)
+				{v.push_back(pos[0]*100+pos[1]*10+dir-1); fm(pos); flag=0;}
+				else flag=1;
+			}
+			if (flag)
 			{
 				int posn=(int)rand() % (int)vnow.size();
 				posn=vnow[posn];
-				v.push_back(pos[0]*100+pos[1]*10+posn);
-				if 	(posn==0) {rot(1); fm(pos);}
-				else if (posn==1) {rot(2); fm(pos);}
-				else if (posn==2) {rot(3); fm(pos);}
-				else if (posn==3) {rot(4); fm(pos);}
+				if 	(posn==0) {rot(1); v.push_back(pos[0]*100+pos[1]*10+1); fm(pos);}
+				else if (posn==1) {rot(2); v.push_back(pos[0]*100+pos[1]*10+2); fm(pos);}
+				else if (posn==2) {rot(3); v.push_back(pos[0]*100+pos[1]*10+3); fm(pos);}
+				else if (posn==3) {rot(4); v.push_back(pos[0]*100+pos[1]*10+4); fm(pos);}
 			}
 			
 		}
