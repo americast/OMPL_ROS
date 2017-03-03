@@ -109,6 +109,7 @@ robot_cleaner_node_EXTERNAL_OBJECTS =
 /home/ss/catkin_ws/devel/lib/turtlesim_cleaner/robot_cleaner_node: /usr/lib/x86_64-linux-gnu/libboost_atomic.so
 /home/ss/catkin_ws/devel/lib/turtlesim_cleaner/robot_cleaner_node: /usr/lib/x86_64-linux-gnu/libpthread.so
 /home/ss/catkin_ws/devel/lib/turtlesim_cleaner/robot_cleaner_node: /usr/lib/x86_64-linux-gnu/libconsole_bridge.so
+/home/ss/catkin_ws/devel/lib/turtlesim_cleaner/robot_cleaner_node: /opt/ros/kinetic/lib/libroslib.so
 /home/ss/catkin_ws/devel/lib/turtlesim_cleaner/robot_cleaner_node: turtlesim_cleaner/CMakeFiles/robot_cleaner_node.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/ss/catkin_ws/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking CXX executable /home/ss/catkin_ws/devel/lib/turtlesim_cleaner/robot_cleaner_node"
 	cd /home/ss/catkin_ws/build/turtlesim_cleaner && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/robot_cleaner_node.dir/link.txt --verbose=$(VERBOSE)

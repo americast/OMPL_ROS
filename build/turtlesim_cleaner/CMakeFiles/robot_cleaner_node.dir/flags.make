@@ -6,5 +6,5 @@ CXX_FLAGS =
 
 CXX_DEFINES = -DROSCONSOLE_BACKEND_LOG4CXX -DROS_BUILD_SHARED_LIBS=1 -DROS_PACKAGE_NAME=\"turtlesim_cleaner\"
 
-CXX_INCLUDES = -I/opt/ros/kinetic/include 
+CXX_INCLUDES = -I/home/ss/catkin_ws/src/turtlesim_cleaner/include -I/opt/ros/kinetic/include 
 

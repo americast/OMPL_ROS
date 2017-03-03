@@ -2,6 +2,7 @@
 #include "geometry_msgs/Twist.h"
 #include "turtlesim/Pose.h"
 #include <bits/stdc++.h>
+#include<"turtlesim/SetPen.h">
 
 using namespace std;
 
@@ -347,6 +348,8 @@ int main(int argc, char **argv)
 	double distance, angle;
 	bool isForward, clockwise;
 	vector <int>v;
+
+	ros::ServiceClient client = n.serviceClient<turtlesim::SetPen>("turtle2/set_pen");
 
 	velocity_publisher = n.advertise<geometry_msgs::Twist>("/turtle1/cmd_vel", 1000);
 	ros::Rate loop_rate(10);
