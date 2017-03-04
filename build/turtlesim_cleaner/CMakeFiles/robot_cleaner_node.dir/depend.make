@@ -61,4 +61,10 @@ turtlesim_cleaner/CMakeFiles/robot_cleaner_node.dir/src/robot_cleaner.cpp.o: /op
 turtlesim_cleaner/CMakeFiles/robot_cleaner_node.dir/src/robot_cleaner.cpp.o: /opt/ros/kinetic/include/ros/wall_timer_options.h
 turtlesim_cleaner/CMakeFiles/robot_cleaner_node.dir/src/robot_cleaner.cpp.o: /opt/ros/kinetic/include/rosconsole/macros_generated.h
 turtlesim_cleaner/CMakeFiles/robot_cleaner_node.dir/src/robot_cleaner.cpp.o: /opt/ros/kinetic/include/turtlesim/Pose.h
+turtlesim_cleaner/CMakeFiles/robot_cleaner_node.dir/src/robot_cleaner.cpp.o: /opt/ros/kinetic/include/turtlesim/SetPen.h
+turtlesim_cleaner/CMakeFiles/robot_cleaner_node.dir/src/robot_cleaner.cpp.o: /opt/ros/kinetic/include/turtlesim/SetPenRequest.h
+turtlesim_cleaner/CMakeFiles/robot_cleaner_node.dir/src/robot_cleaner.cpp.o: /opt/ros/kinetic/include/turtlesim/SetPenResponse.h
+turtlesim_cleaner/CMakeFiles/robot_cleaner_node.dir/src/robot_cleaner.cpp.o: /opt/ros/kinetic/include/turtlesim/Spawn.h
+turtlesim_cleaner/CMakeFiles/robot_cleaner_node.dir/src/robot_cleaner.cpp.o: /opt/ros/kinetic/include/turtlesim/SpawnRequest.h
+turtlesim_cleaner/CMakeFiles/robot_cleaner_node.dir/src/robot_cleaner.cpp.o: /opt/ros/kinetic/include/turtlesim/SpawnResponse.h
 

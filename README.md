@@ -19,9 +19,15 @@ first setup source files
 in one terminal  
 `roscore &`  
 `rosrun turtlesim turtlesim_node`  
+  
 
-and in another, run  
+and in another, run runner.sh or use  
 `catkin_make`  
+`rosservice call /kill turtle1`
+`rosservice call /spawn  1 1 0 "turtle1"`
+`rosservice call /spawn  9 1 0 "pumba"`  
+`rosservice call /spawn  1 9 0 "timon"`  
+`rosservice call /spawn  9 9 0 "segfault"`  
 `rosrun turtlesim_cleaner robot_cleaner_node`
 
 Tested on ROS Kinetic on Ubuntu 16.04.1 LTS Linux 4.4.0
