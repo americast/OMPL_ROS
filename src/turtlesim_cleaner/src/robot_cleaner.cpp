@@ -19,6 +19,7 @@ int cover=0, pos[]={0,0}, pos2[]={9,0}, pos3[]={0,9}, pos4[]={9,9};
 void move(double speed, double distance, bool isForward, int trtlno);
 void rotate(double angular_speed, double angle, bool cloclwise, int trtlno);
 double degrees2radians(double angle_in_degrees);
+vector <int>v;
 
 #define TOTAL_POINTS 10
 int dir=1, dir2=1, dir3=1, dir4=1;
@@ -304,6 +305,10 @@ void a_star(int trtlno)
 		if (cover==9) break;
 		int tarx=uobs[i].x, tary=uobs[i].y, flag=0, food[2];
 		float dist1,dist2,dist3,dist4;
+		if (trtlno==1 && (tarx>=5 || tary>=5))  continue;
+		if (trtlno==2 && (tarx<5 || tary>=5))   continue;
+		if (trtlno==3 && (tarx>=5 || tary<5))   continue;
+		if (trtlno==4 && (tarx<5 || tary<5))    continue;
 
 		vector <int> v;
 		while(1)
@@ -479,238 +484,213 @@ void a_star(int trtlno)
 		if (i>=uobs.size()-1 && loop_flag) i=0;
 	}
 }
-
-
-
-
-
-
-
-int main(int argc, char **argv)
+void one()
 {
-	// Initiate new ROS node named "talker"
-	ros::init(argc, argv, "turtlesim_cleaner");
-	ros::NodeHandle n;
-	double speed, angular_speed;
-	double distance, angle;
-	bool isForward, clockwise;
-	vector <int>v;
-
-	ros::ServiceClient client = n.serviceClient<turtlesim::SetPen>("turtle1/set_pen");
-	//ros::ServiceClient client2 = n.serviceClient<turtlesim::Spawn>("Spawn");
-	velocity_publisher = n.advertise<geometry_msgs::Twist>("/turtle1/cmd_vel", 1000);
-	velocity_publisher2 = n.advertise<geometry_msgs::Twist>("/pumba/cmd_vel", 1000);
-	velocity_publisher3 = n.advertise<geometry_msgs::Twist>("/timon/cmd_vel", 1000);
-	velocity_publisher4 = n.advertise<geometry_msgs::Twist>("/segfault/cmd_vel", 1000);
-	ros::Rate loop_rate(10);
-
-
-	//	/turtle1/cmd_vel is the Topic name
-	//	/geometry_msgs::Twist is the msg type
-	//move(2.5, 5, 0);
-	//lt();
-	//move(2.5, 5, 0);
-	//rt();
-	ROS_INFO("\n\n\n ********START*********\n");
-	while(cover<10)
+while(cover<10)
+{
+	//------------------------
 	{
-	  //------------------------
-	  {
-		int *posh=pos;
-		ROS_INFO("\nNow turte 1 at %d,%d\nCollected: %d\nObstacles hit: %ld\n",posh[0],posh[1],cover,uobs.size());
-		int obs[4]={0,0,0,0}, food[2], flag=0;
-		int tempx, tempy, count=0;
+	int *posh=pos;
+	ROS_INFO("\nNow turte 1 at %d,%d\nCollected: %d\nObstacles hit: %ld\n",posh[0],posh[1],cover,uobs.size());
+	int obs[4]={0,0,0,0}, food[2], flag=0;
+	int tempx, tempy, count=0;
 
-		tempx=1; tempy=0;
-		if (posh[0]+tempx<5 && posh[1]+tempy<5 && posh[0]+tempx>=0 && posh[1]+tempy>=0)
+	tempx=1; tempy=0;
+	if (posh[0]+tempx<5 && posh[1]+tempy<5 && posh[0]+tempx>=0 && posh[1]+tempy>=0)
+	{
+		if (!flag)
 		{
-			if (!flag)
+
+			int dec=decode(posh[0]+tempx,posh[1]+tempy);
+			ROS_INFO("1: %d",dec);
+			if (dec==1)
 			{
-
-				int dec=decode(posh[0]+tempx,posh[1]+tempy);
-				ROS_INFO("1: %d",dec);
-				if (dec==1)
+				obs[count++]=1;
+				int remflag=0;
+				for (int i=0; i<uobs.size();i++)
 				{
-				  obs[count++]=1;
-				  int remflag=0;
-				  for (int i=0; i<uobs.size();i++)
-				  {
-				  	if (uobs[i].x==posh[0]+tempx && uobs[i].y==posh[1]+tempy)
-				  	{remflag=1;  break;}
-				  }
-				  for (int i=0; i<foods.size();i++)
-				  {
-				  	if (foods[i].x==posh[0]+tempx && foods[i].y==posh[1]+tempy)
-				  	{remflag=1;  break;}
-				  }
-				  if (!remflag)
-				    {co_ordinates temp; temp.x=posh[0]+tempx; temp.y=posh[1]+tempy; uobs.push_back(temp);}
+					if (uobs[i].x==posh[0]+tempx && uobs[i].y==posh[1]+tempy)
+					{remflag=1;  break;}
 				}
-				else if (dec==2)
-				  {food[0]=tempx; food[1]=tempy; flag=1;}
-				else count++;
+				for (int i=0; i<foods.size();i++)
+				{
+					if (foods[i].x==posh[0]+tempx && foods[i].y==posh[1]+tempy)
+					{remflag=1;  break;}
+				}
+				if (!remflag)
+					{co_ordinates temp; temp.x=posh[0]+tempx; temp.y=posh[1]+tempy; uobs.push_back(temp);}
 			}
+			else if (dec==2)
+				{food[0]=tempx; food[1]=tempy; flag=1;}
+			else count++;
 		}
-		else obs[count++]=1;
+	}
+	else obs[count++]=1;
 
-		tempx=0; tempy=1;
-		if (posh[0]+tempx<5 && posh[1]+tempy<5 && posh[0]+tempx>=0 && posh[1]+tempy>=0)
+	tempx=0; tempy=1;
+	if (posh[0]+tempx<5 && posh[1]+tempy<5 && posh[0]+tempx>=0 && posh[1]+tempy>=0)
+	{
+		if (!flag)
 		{
-			if (!flag)
+			int dec=decode(posh[0]+tempx,posh[1]+tempy);
+			ROS_INFO("2: %d",dec);
+			if (dec==1)
 			{
-				int dec=decode(posh[0]+tempx,posh[1]+tempy);
-				ROS_INFO("2: %d",dec);
-				if (dec==1)
+				obs[count++]=1;
+				int remflag=0;
+				for (int i=0; i<uobs.size();i++)
 				{
-				  obs[count++]=1;
-				  int remflag=0;
-				  for (int i=0; i<uobs.size();i++)
-				  {
-				  	if (uobs[i].x==posh[0]+tempx && uobs[i].y==posh[1]+tempy)
-				  	{remflag=1;  break;}
-				  }
-				  for (int i=0; i<foods.size();i++)
-				  {
-				  	if (foods[i].x==posh[0]+tempx && foods[i].y==posh[1]+tempy)
-				  	{remflag=1;  break;}
-				  }
-				  if (!remflag)
-				    {co_ordinates temp; temp.x=posh[0]+tempx; temp.y=posh[1]+tempy; uobs.push_back(temp);}
+					if (uobs[i].x==posh[0]+tempx && uobs[i].y==posh[1]+tempy)
+					{remflag=1;  break;}
 				}
-				else if (dec==2)
-				  {food[0]=tempx; food[1]=tempy; flag=1;}
-				else count++;
+				for (int i=0; i<foods.size();i++)
+				{
+					if (foods[i].x==posh[0]+tempx && foods[i].y==posh[1]+tempy)
+					{remflag=1;  break;}
+				}
+				if (!remflag)
+					{co_ordinates temp; temp.x=posh[0]+tempx; temp.y=posh[1]+tempy; uobs.push_back(temp);}
 			}
+			else if (dec==2)
+				{food[0]=tempx; food[1]=tempy; flag=1;}
+			else count++;
 		}
-		else obs[count++]=1;
+	}
+	else obs[count++]=1;
 
-		tempx=-1; tempy=0;
-		if (posh[0]+tempx<5 && posh[1]+tempy<5 && posh[0]+tempx>=0 && posh[1]+tempy>=0)
+	tempx=-1; tempy=0;
+	if (posh[0]+tempx<5 && posh[1]+tempy<5 && posh[0]+tempx>=0 && posh[1]+tempy>=0)
+	{
+		if (!flag)
 		{
-			if (!flag)
+			int dec=decode(posh[0]+tempx,posh[1]+tempy);
+			ROS_INFO("3: %d",dec);
+			if (dec==1)
 			{
-				int dec=decode(posh[0]+tempx,posh[1]+tempy);
-				ROS_INFO("3: %d",dec);
-				if (dec==1)
+				obs[count++]=1;
+				int remflag=0;
+				for (int i=0; i<uobs.size();i++)
 				{
-				  obs[count++]=1;
-				  int remflag=0;
-				  for (int i=0; i<uobs.size();i++)
-				  {
-				  	if (uobs[i].x==posh[0]+tempx && uobs[i].y==posh[1]+tempy)
-				  	{remflag=1;  break;}
-				  }
-				  for (int i=0; i<foods.size();i++)
-				  {
-				  	if (foods[i].x==posh[0]+tempx && foods[i].y==posh[1]+tempy)
-				  	{remflag=1;  break;}
-				  }
-				  if (!remflag)
-				    {co_ordinates temp; temp.x=posh[0]+tempx; temp.y=posh[1]+tempy; uobs.push_back(temp);}
+					if (uobs[i].x==posh[0]+tempx && uobs[i].y==posh[1]+tempy)
+					{remflag=1;  break;}
 				}
-				else if (dec==2)
-				  {food[0]=tempx; food[1]=tempy; flag=1;}
-				else count++;
+				for (int i=0; i<foods.size();i++)
+				{
+					if (foods[i].x==posh[0]+tempx && foods[i].y==posh[1]+tempy)
+					{remflag=1;  break;}
+				}
+				if (!remflag)
+					{co_ordinates temp; temp.x=posh[0]+tempx; temp.y=posh[1]+tempy; uobs.push_back(temp);}
 			}
-
+			else if (dec==2)
+				{food[0]=tempx; food[1]=tempy; flag=1;}
+			else count++;
 		}
-		else obs[count++]=1;
 
-		tempx=0; tempy=-1;
-		if (posh[0]+tempx<5 && posh[1]+tempy<5 && posh[0]+tempx>=0 && posh[1]+tempy>=0)
+	}
+	else obs[count++]=1;
+
+	tempx=0; tempy=-1;
+	if (posh[0]+tempx<5 && posh[1]+tempy<5 && posh[0]+tempx>=0 && posh[1]+tempy>=0)
+	{
+		if (!flag)
 		{
-			if (!flag)
+			int dec=decode(posh[0]+tempx,posh[1]+tempy);
+			ROS_INFO("4: %d",dec);
+			if (dec==1)
 			{
-				int dec=decode(posh[0]+tempx,posh[1]+tempy);
-				ROS_INFO("4: %d",dec);
-				if (dec==1)
+				obs[count++]=1;
+				int remflag=0;
+				for (int i=0; i<uobs.size();i++)
 				{
-				  obs[count++]=1;
-				  int remflag=0;
-				  for (int i=0; i<uobs.size();i++)
-				  {
-				  	if (uobs[i].x==posh[0]+tempx && uobs[i].y==posh[1]+tempy)
-				  	{remflag=1;  break;}
-				  }
-				  for (int i=0; i<foods.size();i++)
-				  {
-				  	if (foods[i].x==posh[0]+tempx && foods[i].y==posh[1]+tempy)
-				  	{remflag=1;  break;}
-				  }
-				  if (!remflag)
-				    {co_ordinates temp; temp.x=posh[0]+tempx; temp.y=posh[1]+tempy; uobs.push_back(temp);}
+					if (uobs[i].x==posh[0]+tempx && uobs[i].y==posh[1]+tempy)
+					{remflag=1;  break;}
 				}
-				else if (dec==2)
-				  {food[0]=tempx; food[1]=tempy; flag=1;}
-				else count++;
+				for (int i=0; i<foods.size();i++)
+				{
+					if (foods[i].x==posh[0]+tempx && foods[i].y==posh[1]+tempy)
+					{remflag=1;  break;}
+				}
+				if (!remflag)
+					{co_ordinates temp; temp.x=posh[0]+tempx; temp.y=posh[1]+tempy; uobs.push_back(temp);}
 			}
+			else if (dec==2)
+				{food[0]=tempx; food[1]=tempy; flag=1;}
+			else count++;
 		}
-		else obs[count++]=1;
-		//for (int i=0; i<v.size();i++)
-		//{
-		//  int here=v[i]; here/=10;
-		//  if (here==pos[0]*10+pos[1])
-		//    obs[v[i]%10]=1;
-		//}
-		vector <int> vnow;
-		for (int i=0;i<4;i++)
+	}
+	else obs[count++]=1;
+	//for (int i=0; i<v.size();i++)
+	//{
+	//  int here=v[i]; here/=10;
+	//  if (here==pos[0]*10+pos[1])
+	//    obs[v[i]%10]=1;
+	//}
+	vector <int> vnow;
+	for (int i=0;i<4;i++)
+	{
+		ROS_INFO("%d: %d\n",i+1,obs[i]);
+		if (obs[i]==0) vnow.push_back(i);
+	}
+	if (flag)
+	{
+		if (food[0]==1) {rot(1,1); fm(posh,1);}
+		if (food[0]==-1) {rot(3,1); fm(posh,1);}
+		if (food[1]==1) {rot(2,1); fm(posh,1);}
+		if (food[1]==-1) {rot(4,1); fm(posh,1);}
+		ROS_INFO("\n\n\n ********COLLECTED %d*********\n", cover+1);
+		cover++;
+		v.clear();
+		for (int i=0;i<uobs.size();i++)
 		{
-		  ROS_INFO("%d: %d\n",i+1,obs[i]);
-		  if (obs[i]==0) vnow.push_back(i);
+			if (uobs[i].x==posh[0] && uobs[i].y==posh[1])
+						uobs.erase(uobs.begin()+i, uobs.begin()+i+1);
+		}
+		co_ordinates temp; temp.x=posh[0]; temp.y=posh[1];
+		foods.push_back(temp);
+		if (uobs.size()>0.6*(9-cover))
+			{a_star(1); uobs.clear();}
+	}
+	else
+	{
+		int flag=1;
+		if (obs[dir-1]==0)
+		{
+			int count=0;
+			for (int i=0; i<v.size();i++)
+			{
+				int here=v[i]; here/=10;
+				if (here==posh[0]*10+posh[1])
+					if (v[i]%10==dir) flag=0;
+			}
+			for (int i=0;i<4;i++)
+				if (i==dir-1) continue;
+				else if (obs[i]==1) count++;
+			if (count>=3) flag=0;
+			if (flag)
+			{v.push_back(posh[0]*100+posh[1]*10+dir-1); fm(posh,1); flag=0;}
+			else flag=1;
 		}
 		if (flag)
 		{
-			if (food[0]==1) {rot(1,1); fm(posh,1);}
-			if (food[0]==-1) {rot(3,1); fm(posh,1);}
-			if (food[1]==1) {rot(2,1); fm(posh,1);}
-			if (food[1]==-1) {rot(4,1); fm(posh,1);}
-			ROS_INFO("\n\n\n ********COLLECTED %d*********\n", cover+1);
-			cover++;
-			v.clear();
-			for (int i=0;i<uobs.size();i++)
-			{
-				if (uobs[i].x==posh[0] && uobs[i].y==posh[1])
-			 	      uobs.erase(uobs.begin()+i, uobs.begin()+i+1);
-			}
-			co_ordinates temp; temp.x=posh[0]; temp.y=posh[1];
-			foods.push_back(temp);
-			if (uobs.size()>0.6*(9-cover))
-			  {a_star(1); uobs.clear();}
-		}
-		else
-		{
-			int flag=1;
-			if (obs[dir-1]==0)
-			{
-				int count=0;
-				for (int i=0; i<v.size();i++)
-				{
-					int here=v[i]; here/=10;
-					if (here==posh[0]*10+posh[1])
-					  if (v[i]%10==dir) flag=0;
-				}
-				for (int i=0;i<4;i++)
-				  if (i==dir-1) continue;
-				  else if (obs[i]==1) count++;
-				if (count>=3) flag=0;
-				if (flag)
-				{v.push_back(posh[0]*100+posh[1]*10+dir-1); fm(posh,1); flag=0;}
-				else flag=1;
-			}
-			if (flag)
-			{
-				int posn=(int)rand() % (int)vnow.size();
-				posn=vnow[posn];
-				if 	(posn==0) {rot(1,1); v.push_back(posh[0]*100+posh[1]*10+1); fm(posh,1);}
-				else if (posn==1) {rot(2,1); v.push_back(posh[0]*100+posh[1]*10+2); fm(posh,1);}
-				else if (posn==2) {rot(3,1); v.push_back(posh[0]*100+posh[1]*10+3); fm(posh,1);}
-				else if (posn==3) {rot(4,1); v.push_back(posh[0]*100+posh[1]*10+4); fm(posh,1);}
-			}
-
+			int posn=(int)rand() % (int)vnow.size();
+			posn=vnow[posn];
+			if 	(posn==0) {rot(1,1); v.push_back(posh[0]*100+posh[1]*10+1); fm(posh,1);}
+			else if (posn==1) {rot(2,1); v.push_back(posh[0]*100+posh[1]*10+2); fm(posh,1);}
+			else if (posn==2) {rot(3,1); v.push_back(posh[0]*100+posh[1]*10+3); fm(posh,1);}
+			else if (posn==3) {rot(4,1); v.push_back(posh[0]*100+posh[1]*10+4); fm(posh,1);}
 		}
 
-	   }	//ros::spin();
+	}
 
+	 }	//ros::spin();
+}
+}
+
+void two()
+{
+while(cover<10)
+{
 	     //------------------------2
 	  {
 		int *posh=pos2;
@@ -907,6 +887,13 @@ int main(int argc, char **argv)
 		}
 
 	   }	//ros::spin();  //------------------------
+}
+}
+
+void three()
+{
+while(cover<10)
+{
 	  {
 		int *posh=pos3;
 		ROS_INFO("\nNow turtle 3 at %d,%d\nCollected: %d\nObstacles hit: %ld\n",posh[0],posh[1],cover,uobs.size());
@@ -1102,6 +1089,12 @@ int main(int argc, char **argv)
 		}
 
 	   }	//ros::spin();  //------------------------4
+}
+}
+void four()
+{
+while(cover<10)
+{
 	  {
 		int *posh=pos4;
 		ROS_INFO("\nNow turtle 4 at %d,%d\nCollected: %d\nObstacles hit: %ld\n",posh[0],posh[1],cover,uobs.size());
@@ -1299,7 +1292,35 @@ int main(int argc, char **argv)
 	   }	//ros::spin();
 
 	}
+}
 
+int main(int argc, char **argv)
+{
+	// Initiate new ROS node named "talker"
+	ros::init(argc, argv, "turtlesim_cleaner");
+	ros::NodeHandle n;
+	double speed, angular_speed;
+	double distance, angle;
+	bool isForward, clockwise;
+
+	ros::ServiceClient client = n.serviceClient<turtlesim::SetPen>("turtle1/set_pen");
+	//ros::ServiceClient client2 = n.serviceClient<turtlesim::Spawn>("Spawn");
+	velocity_publisher = n.advertise<geometry_msgs::Twist>("/turtle1/cmd_vel", 1000);
+	velocity_publisher2 = n.advertise<geometry_msgs::Twist>("/pumba/cmd_vel", 1000);
+	velocity_publisher3 = n.advertise<geometry_msgs::Twist>("/timon/cmd_vel", 1000);
+	velocity_publisher4 = n.advertise<geometry_msgs::Twist>("/segfault/cmd_vel", 1000);
+	ros::Rate loop_rate(10);
+
+
+	//	/turtle1/cmd_vel is the Topic name
+	//	/geometry_msgs::Twist is the msg type
+	//move(2.5, 5, 0);
+	//lt();
+	//move(2.5, 5, 0);
+	//rt();
+	ROS_INFO("\n\n\n ********START*********\n");
+  thread t1(one); thread t2(two); thread t3(three); thread t4(four);
+  t1.join(); t2.join(); t3.join(); t4.join();
 	return 0;
 }
 

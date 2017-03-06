@@ -16,7 +16,6 @@ find_package(catkin REQUIRED COMPONENTS
   roslib
 )
 
-
 ## Uncomment this if the package has a setup.py. This macro ensures
 ## modules and global scripts declared therein get installed
 ## See http://ros.org/doc/api/catkin/html/user_guide/setup_dot_py.html
@@ -123,7 +122,8 @@ include_directories(include ${catkin_INCLUDE_DIRS} )
 # add_library(turtlesim_cleaner
 #   src/${PROJECT_NAME}/turtlesim_cleaner.cpp
 # )
-
+SET(GCC_COVERAGE_LINK_FLAGS    "-std=c++0x -lpthread")
+add_definitions(${GCC_COVERAGE_LINK_FLAGS})
 
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
@@ -135,11 +135,16 @@ add_executable(robot_cleaner_node src/robot_cleaner.cpp)
 
 
 ## Specify libraries to link a library or executable target against
-target_link_libraries(robot_cleaner_node ${catkin_LIBRARIES})
+target_link_libraries(robot_cleaner_node pthread ${catkin_LIBRARIES})
 
 ## Add cmake target dependencies of the executable
 ## same as for the library above
 add_dependencies(robot_cleaner_node beginner_tutorials_gencpp)
+
+			include_directories(${pthread_INCLUDE_DIRS})
+
+			link_directories(${pthread_LIBRARY_DIRS})
+
 #############
 ## Install ##
 #############

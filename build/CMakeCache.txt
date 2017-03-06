@@ -234,6 +234,9 @@ RT_LIBRARY:FILEPATH=/usr/lib/x86_64-linux-gnu/librt.so
 //Enable debian style python package layout
 SETUPTOOLS_DEB_LAYOUT:BOOL=ON
 
+//The directory containing a CMake configuration file for Threads.
+Threads_DIR:PATH=Threads_DIR-NOTFOUND
+
 //LSB Distrib tag
 UBUNTU:BOOL=TRUE
 
