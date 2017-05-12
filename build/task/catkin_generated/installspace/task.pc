@@ -1,0 +1,8 @@
+prefix=/home/ss/catkin_ws/install
+
+Name: task
+Description: Description of task
+Version: 2.3.2
+Cflags: -I/home/ss/catkin_ws/install/include
+Libs: -L/home/ss/catkin_ws/install/lib 
+Requires: graph_msgs roscpp roslib visualization_msgs
