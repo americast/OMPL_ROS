@@ -70,7 +70,7 @@ public:
         
         if (ok)
         {
-          auto ob::StateSpacePtr *space = new ob::RealVectorStateSpace();
+          auto *space = new ob::RealVectorStateSpace();
            //auto space(make_shared<ob::RealVectorStateSpace>());
             space->addDimension(0.0, ppm_.getWidth());
             space->addDimension(0.0, ppm_.getHeight());
